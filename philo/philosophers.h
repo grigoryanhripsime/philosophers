@@ -15,7 +15,7 @@ typedef struct s_philo
     int index;
     pthread_t thread_id;
     size_t after_last_meal;
-    int dead;
+    pthread_mutex_t after_last_meal_mutex;
     t_philosophers *data;
 } t_philo;
 
@@ -29,6 +29,8 @@ typedef struct s_philosophers
     int number_of_times_each_philosopher_must_eat;
     t_philo *philos;
     pthread_mutex_t *forks;
+    int dead_philo;
+    pthread_mutex_t dead_philo_mutex;
 } t_philosophers;
 
 
