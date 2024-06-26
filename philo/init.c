@@ -12,9 +12,6 @@ t_philosophers *init(int argc, char *argv[])
     philos -> time_to_die = check_num(argv[2]);
     philos -> time_to_eat = check_num(argv[3]);
     philos -> time_to_sleep = check_num(argv[4]);
-    pthread_mutex_init(&(philos -> dead_philo_mutex), NULL);
-    pthread_mutex_init(&(philos -> print_mutex), NULL);
-    pthread_mutex_init(&(philos -> all_philos_finished_mutex), NULL);
     philos->all_philos_finished = 0;
     philos -> dead_philo = 0;
     if (argc == 6)
@@ -23,7 +20,7 @@ t_philosophers *init(int argc, char *argv[])
         philos -> number_of_times_each_philosopher_must_eat = -1;
     if (philos -> number_of_philosophers == 0 || philos -> time_to_die == 0 || philos -> time_to_eat == 0 || philos -> time_to_sleep == 0)
         return (0);
-    create_forks(philos);
+    mutex_inits(philos);
     create_threads(philos);
     return (philos);
 }
@@ -42,10 +39,10 @@ void create_threads(t_philosophers *philosophers)
         philosophers->philos[i].data = philosophers;
         philosophers->philos[i].after_last_meal = philosophers -> start;
         philosophers->philos[i].number_of_times_he_ate = 0;
-        pthread_create(&(philosophers->philos[i].thread_id), NULL, funkcia, &(philosophers->philos[i]));
+        pthread_create(&(philosophers->philos[i].thread_id), NULL, routine, &(philosophers->philos[i]));
         i++;
     }
-        i = 0;
+    i = 0;
     while (i < (philosophers -> number_of_philosophers))
     {
         pthread_mutex_init(&(philosophers->philos[i].after_last_meal_mutex), NULL);
@@ -54,8 +51,11 @@ void create_threads(t_philosophers *philosophers)
     }
 }
 
-void create_forks(t_philosophers *philos)
+void mutex_inits(t_philosophers *philos)
 {
+    pthread_mutex_init(&(philos -> dead_philo_mutex), NULL);
+    pthread_mutex_init(&(philos -> print_mutex), NULL);
+    pthread_mutex_init(&(philos -> all_philos_finished_mutex), NULL);
     int i;
     philos -> forks = malloc(philos->number_of_philosophers * sizeof(pthread_mutex_t));
     if (!philos -> forks)
@@ -68,7 +68,7 @@ void create_forks(t_philosophers *philos)
     }
 }
 
-void *funkcia(void *philo_void)
+void *routine(void *philo_void)
 {
     t_philo *philo;
     pthread_mutex_t *left_fork;
@@ -84,26 +84,8 @@ void *funkcia(void *philo_void)
     right_fork = &(philo->data->forks[philo->index]);
     while (1)
     {
-        pthread_mutex_lock(right_fork);
-        if (!print(philo->data, philo->index, "has taken a fork"))
+        if (!eating(philo, left_fork, right_fork))
             return (0);
-        pthread_mutex_lock(left_fork);
-        if (!print(philo->data, philo->index, "has taken a fork"))
-            return (0);
-        if (!print(philo->data, philo->index, "is eating"))
-            return (0);
-        ft_usleep(philo->data->time_to_eat);
-        pthread_mutex_unlock(right_fork);
-        pthread_mutex_unlock(left_fork);
-
-        pthread_mutex_lock(&(philo->after_last_meal_mutex));
-        philo->after_last_meal = get_time();
-        pthread_mutex_unlock(&(philo->after_last_meal_mutex));   
-
-        pthread_mutex_lock(&(philo->number_of_times_he_ate_mutex));
-        philo->number_of_times_he_ate++;
-        pthread_mutex_unlock(&(philo->number_of_times_he_ate_mutex));  
-
         if (!print(philo->data, philo->index, "is sleeping"))
             return (0);
         ft_usleep(philo->data->time_to_sleep);
@@ -111,6 +93,30 @@ void *funkcia(void *philo_void)
             return (0);
     }
     return (0);
+}
+
+int eating(t_philo *philo, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork)
+{
+    pthread_mutex_lock(right_fork);
+    if (!print(philo->data, philo->index, "has taken a fork"))
+        return (0);
+    pthread_mutex_lock(left_fork);
+    if (!print(philo->data, philo->index, "has taken a fork"))
+        return (0);
+    if (!print(philo->data, philo->index, "is eating"))
+        return (0);
+    ft_usleep(philo->data->time_to_eat);
+    pthread_mutex_unlock(right_fork);
+    pthread_mutex_unlock(left_fork);
+
+    pthread_mutex_lock(&(philo->after_last_meal_mutex));
+    philo->after_last_meal = get_time();
+    pthread_mutex_unlock(&(philo->after_last_meal_mutex));   
+
+    pthread_mutex_lock(&(philo->number_of_times_he_ate_mutex));
+    philo->number_of_times_he_ate++;
+    pthread_mutex_unlock(&(philo->number_of_times_he_ate_mutex));  
+    return (1);
 }
 
 int print(t_philosophers *philosophers, int index, char *message)

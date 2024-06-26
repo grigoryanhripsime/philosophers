@@ -46,12 +46,16 @@ int	check_num(char *str);
 
 //philosophers.c
 int main(int argc, char *argv[]);
+int check_dead(t_philosophers *philos, int i);
+int check_eaten(t_philosophers *philos, int i);
+void close_destroy(t_philosophers *philos);
 
 //init.c
 t_philosophers *init(int argc, char *argv[]);
 void create_threads(t_philosophers *philosophers);
-void create_forks(t_philosophers *philos);
-void *funkcia(void *philo_void);
+void mutex_inits(t_philosophers *philos);
+void *routine(void *philo_void);
+int eating(t_philo *philo, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
 int print(t_philosophers *philosophers, int index, char *message);
 
 //time.c
