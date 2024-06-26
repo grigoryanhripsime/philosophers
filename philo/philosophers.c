@@ -12,6 +12,9 @@ int main(int argc, char *argv[])
         return (printf("Invalid Argument!!!\n"));
     while (1)
     {
+        pthread_mutex_lock(&(philos->all_philos_finished_mutex));
+        philos->all_philos_finished = 0;
+        pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
         i = 0;
         while (i < philos->number_of_philosophers)
         {
@@ -20,16 +23,20 @@ int main(int argc, char *argv[])
 				close_destroy(philos);
 				return (0);
 			}
-            if (!check_eaten(philos, i))
-            {
-				close_destroy(philos);
-				return (0);
-			}
+            check_eaten(philos, i);
             i++;
         }
+        pthread_mutex_lock(&(philos->all_philos_finished_mutex));
+        if (philos->all_philos_finished == philos->number_of_philosophers)
+        {
+            pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
+            break ;
+        }
+        pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
     }
-    
+    close_destroy(philos);
 }
+
 int check_dead(t_philosophers *philos, int i)
 {
     pthread_mutex_lock(&(philos->philos[i].after_last_meal_mutex));
@@ -48,17 +55,14 @@ int check_dead(t_philosophers *philos, int i)
 
 int check_eaten(t_philosophers *philos, int i)
 {
-	pthread_mutex_lock(&(philos->philos[i].number_of_times_he_ate_mutex));
-    if (philos->number_of_times_each_philosopher_must_eat < 0 || philos->philos[i].number_of_times_he_ate < philos->number_of_times_each_philosopher_must_eat)
-	{
-		pthread_mutex_unlock(&(philos->philos[i].number_of_times_he_ate_mutex));
+    if (philos->number_of_times_each_philosopher_must_eat < 0)
 		return (1);
-	}
+    pthread_mutex_lock(&(philos->philos[i].number_of_times_he_ate_mutex));
     if (philos->philos[i].number_of_times_he_ate >= philos->number_of_times_each_philosopher_must_eat)
     {
         pthread_mutex_unlock(&(philos->philos[i].number_of_times_he_ate_mutex));
         pthread_mutex_lock(&(philos->all_philos_finished_mutex));
-        philos->all_philos_finished = 1;
+        philos->all_philos_finished++;
         pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
         return (0);
     }

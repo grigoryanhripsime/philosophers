@@ -131,7 +131,7 @@ int print(t_philosophers *philosophers, int index, char *message)
     pthread_mutex_lock(&(philosophers->all_philos_finished_mutex));
     ate = philosophers->all_philos_finished;
     pthread_mutex_unlock(&(philosophers->all_philos_finished_mutex));
-    if (dead || ate)
+    if (dead || ate == (philosophers->number_of_philosophers))
         return (0);
     pthread_mutex_lock(&(philosophers->print_mutex));
     printf("%ld %d %s\n", get_time() - philosophers->start, index + 1, message);
