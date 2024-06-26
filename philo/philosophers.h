@@ -57,6 +57,7 @@ void mutex_inits(t_philosophers *philos);
 void *routine(void *philo_void);
 int eating(t_philo *philo, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
 int print(t_philosophers *philosophers, int index, char *message);
+int taking_forks(t_philo *philo, pthread_mutex_t **left_fork, pthread_mutex_t **right_fork);
 
 //time.c
 size_t get_time(void);

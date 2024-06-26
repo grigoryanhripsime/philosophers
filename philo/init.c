@@ -15,7 +15,11 @@ t_philosophers *init(int argc, char *argv[])
     philos->all_philos_finished = 0;
     philos -> dead_philo = 0;
     if (argc == 6)
-        philos -> number_of_times_each_philosopher_must_eat = check_num(argv[5]);
+	{
+		philos -> number_of_times_each_philosopher_must_eat = check_num(argv[5]);
+		if (philos -> number_of_times_each_philosopher_must_eat == 0)
+			return (0);	
+	}
     else 
         philos -> number_of_times_each_philosopher_must_eat = -1;
     if (philos -> number_of_philosophers == 0 || philos -> time_to_die == 0 || philos -> time_to_eat == 0 || philos -> time_to_sleep == 0)
@@ -32,7 +36,6 @@ void create_threads(t_philosophers *philosophers)
     if (!philosophers -> philos)
         return ;
     i = 0;
-    printf("%d\n", philosophers -> number_of_philosophers);
     while (i < philosophers -> number_of_philosophers)
     {
         philosophers->philos[i].index = i;
@@ -97,22 +100,20 @@ void *routine(void *philo_void)
 
 int eating(t_philo *philo, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork)
 {
-    pthread_mutex_lock(right_fork);
-    if (!print(philo->data, philo->index, "has taken a fork"))
-        return (0);
-    pthread_mutex_lock(left_fork);
-    if (!print(philo->data, philo->index, "has taken a fork"))
-        return (0);
+	if (!taking_forks(philo, &left_fork, &right_fork))
+		return (0);
     if (!print(philo->data, philo->index, "is eating"))
-        return (0);
+	{
+		pthread_mutex_unlock(right_fork);
+    	pthread_mutex_unlock(left_fork);
+		return (0);
+	}
     ft_usleep(philo->data->time_to_eat);
     pthread_mutex_unlock(right_fork);
     pthread_mutex_unlock(left_fork);
-
     pthread_mutex_lock(&(philo->after_last_meal_mutex));
     philo->after_last_meal = get_time();
     pthread_mutex_unlock(&(philo->after_last_meal_mutex));   
-
     pthread_mutex_lock(&(philo->number_of_times_he_ate_mutex));
     philo->number_of_times_he_ate++;
     pthread_mutex_unlock(&(philo->number_of_times_he_ate_mutex));  
@@ -136,4 +137,23 @@ int print(t_philosophers *philosophers, int index, char *message)
     printf("%ld %d %s\n", get_time() - philosophers->start, index + 1, message);
     pthread_mutex_unlock(&(philosophers->print_mutex));
     return (1);
+}
+
+
+int taking_forks(t_philo *philo, pthread_mutex_t **left_fork, pthread_mutex_t **right_fork)
+{
+    pthread_mutex_lock(*right_fork);
+    if (!print(philo->data, philo->index, "has taken a fork") || philo->data->number_of_philosophers == 1)
+	{
+		pthread_mutex_unlock(*right_fork);
+		return (0);
+	}
+    pthread_mutex_lock(*left_fork);
+    if (!print(philo->data, philo->index, "has taken a fork") || philo->data->number_of_philosophers == 1)
+	{
+		pthread_mutex_unlock(*right_fork);
+    	pthread_mutex_unlock(*left_fork);
+		return (0);
+	}
+	return (1);
 }
