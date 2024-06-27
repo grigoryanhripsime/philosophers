@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -I ./ #-g -pthread -fsanitize=thread
 
 NAME = philo
 
-SRCS = philosophers.c validation.c time.c init.c
+SRCS = philosophers.c utils.c init.c routine.c
 
 OBJS = $(SRCS:.c=.o)
 
