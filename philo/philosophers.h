@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/27 17:41:40 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/28 16:23:49 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ typedef struct s_philosophers
 int				ft_isspace(char c);
 int				ft_strlen(char *s);
 int				check_num(char *str);
-size_t			get_time(void);
-int				ft_usleep(int mls);
+long long			get_time(void);
+void				ft_usleep(long long mls);
 
 //philosophers.c
 int				main(int argc, char *argv[]);

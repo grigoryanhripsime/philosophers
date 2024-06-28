@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/27 17:02:50 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/28 16:25:55 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,12 @@ int	check_dead(t_philosophers *philos)
         pthread_mutex_lock(&(philos->philos[i].after_last_meal_mutex));
         if ((get_time() - philos->philos[i].after_last_meal) >= philos->time_to_die)
         {
-            print(philos, i, "died");
             pthread_mutex_lock(&(philos->finish_mutex));
             philos->finish = 1;
             pthread_mutex_unlock(&(philos->finish_mutex));
+			pthread_mutex_lock(&(philos->print_mutex));
+			printf("%llu %d %s\n", get_time() - philos->start, i + 1, "died");
+			pthread_mutex_unlock(&(philos->print_mutex));
             pthread_mutex_unlock(&(philos->philos[i].after_last_meal_mutex));
             return (1);
         }
