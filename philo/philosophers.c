@@ -23,69 +23,65 @@ int	main(int argc, char *argv[])
 		return (printf("Invalid Argument!!!\n"));
 	mutex_inits(philos);
 	create_threads(philos);
-	loop(philos);
-	close_destroy(philos);
-}
-
-void	loop(t_philosophers	*philos)
-{
-	int	i;
-
 	while (1)
 	{
-		pthread_mutex_lock(&(philos->all_philos_finished_mutex));
-		philos->all_philos_finished = 0;
-		pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
-		i = 0;
-		while (i < philos->number_of_philos)
-		{
-			if (!check_dead(philos, i))
-				return ;
-			check_eaten(philos, i);
-			i++;
-		}
-		pthread_mutex_lock(&(philos->all_philos_finished_mutex));
-		if (philos->all_philos_finished == philos->number_of_philos)
-		{
-			pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
-			break ;
-		}
-		pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
+        if (check_dead(philos))
+            break ;
+        if (check_eaten(philos))
+            break ;
 	}
+    close_destroy(philos);
 }
 
-int	check_dead(t_philosophers *philos, int i)
+int	check_dead(t_philosophers *philos)
 {
-	pthread_mutex_lock(&(philos->philos[i].after_last_meal_mutex));
-	if ((get_time() - philos->philos[i].after_last_meal) >= philos->time_to_die)
-	{
-		pthread_mutex_unlock(&(philos->philos[i].after_last_meal_mutex));
-		print(philos, i, "died");
-		pthread_mutex_lock(&(philos->dead_philo_mutex));
-		philos->dead_philo = 1;
-		pthread_mutex_unlock(&(philos->dead_philo_mutex));
-		return (0);
-	}
-	pthread_mutex_unlock(&(philos->philos[i].after_last_meal_mutex));
-	return (1);
+    int i;
+
+    i = 0;
+    while (i < philos->number_of_philos)
+    {
+        pthread_mutex_lock(&(philos->philos[i].after_last_meal_mutex));
+        if ((get_time() - philos->philos[i].after_last_meal) >= philos->time_to_die)
+        {
+            print(philos, i, "died");
+            pthread_mutex_lock(&(philos->finish_mutex));
+            philos->finish = 1;
+            pthread_mutex_unlock(&(philos->finish_mutex));
+            pthread_mutex_unlock(&(philos->philos[i].after_last_meal_mutex));
+            return (1);
+        }
+        pthread_mutex_unlock(&(philos->philos[i].after_last_meal_mutex));
+        i++;
+    }
+	return (0);
 }
 
-int	check_eaten(t_philosophers *philos, int i)
+int	check_eaten(t_philosophers *philos)
 {
+    int i;
+    int all_philos_finished;
+	
 	if (philos->number_philos_must_eat < 0)
-		return (1);
-	pthread_mutex_lock(&(philos->philos[i].number_of_times_he_ate_mutex));
-	if (philos->philos[i].number_of_times_he_ate
-		>= philos->number_philos_must_eat)
-	{
-		pthread_mutex_unlock(&(philos->philos[i].number_of_times_he_ate_mutex));
-		pthread_mutex_lock(&(philos->all_philos_finished_mutex));
-		philos->all_philos_finished++;
-		pthread_mutex_unlock(&(philos->all_philos_finished_mutex));
 		return (0);
-	}
-	pthread_mutex_unlock(&(philos->philos[i].number_of_times_he_ate_mutex));
-	return (1);
+    i = 0;
+    all_philos_finished = 0;
+    while (i < philos->number_of_philos)
+    {
+        pthread_mutex_lock(&(philos->philos[i].number_of_times_he_ate_mutex));
+        if (philos->philos[i].number_of_times_he_ate
+            >= philos->number_philos_must_eat)
+            all_philos_finished++;
+        pthread_mutex_unlock(&(philos->philos[i].number_of_times_he_ate_mutex));
+        i++;
+    }
+    if (all_philos_finished == philos->number_of_philos)
+    {
+        pthread_mutex_lock(&(philos->finish_mutex));
+        philos->finish = 1;
+        pthread_mutex_unlock(&(philos->finish_mutex));
+        return (1);
+    }
+	return (0);
 }
 
 void	close_destroy(t_philosophers *philos)
@@ -102,9 +98,8 @@ void	close_destroy(t_philosophers *philos)
 			&(philos->philos[i].number_of_times_he_ate_mutex));
 		i++;
 	}
-	pthread_mutex_destroy(&(philos -> dead_philo_mutex));
+	pthread_mutex_destroy(&(philos -> finish_mutex));
 	pthread_mutex_destroy(&(philos -> print_mutex));
-	pthread_mutex_destroy(&(philos -> all_philos_finished_mutex));
 	free(philos->philos);
 	free(philos->forks);
 	free(philos);

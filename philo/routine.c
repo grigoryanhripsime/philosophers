@@ -12,6 +12,18 @@
 
 #include "philosophers.h"
 
+int finished(t_philosophers *philos)
+{
+	pthread_mutex_lock(&(philos->finish_mutex));
+    if (philos->finish)
+	{
+    	pthread_mutex_unlock(&(philos->finish_mutex));
+		return (1);
+	}
+	pthread_mutex_unlock(&(philos->finish_mutex));
+	return (0);
+}
+
 void	*routine(void *philo_void)
 {
 	t_philo			*philo;
@@ -63,16 +75,7 @@ int	eating(t_philo *philo, pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
 
 int	print(t_philosophers *philosophers, int index, char *message)
 {
-	int	dead;
-	int	ate;
-
-	pthread_mutex_lock(&(philosophers->dead_philo_mutex));
-	dead = philosophers->dead_philo;
-	pthread_mutex_unlock(&(philosophers->dead_philo_mutex));
-	pthread_mutex_lock(&(philosophers->all_philos_finished_mutex));
-	ate = philosophers->all_philos_finished;
-	pthread_mutex_unlock(&(philosophers->all_philos_finished_mutex));
-	if (dead || ate == (philosophers->number_of_philos))
+	if (finished(philosophers))
 		return (0);
 	pthread_mutex_lock(&(philosophers->print_mutex));
 	printf("%ld %d %s\n", get_time() - philosophers->start, index + 1, message);

@@ -24,8 +24,7 @@ t_philosophers	*init(int argc, char *argv[])
 	philos -> time_to_die = check_num(argv[2]);
 	philos -> time_to_eat = check_num(argv[3]);
 	philos -> time_to_sleep = check_num(argv[4]);
-	philos->all_philos_finished = 0;
-	philos -> dead_philo = 0;
+	philos -> finish = 0;
 	if (argc == 6)
 		philos -> number_philos_must_eat = check_num(argv[5]);
 	else
@@ -70,9 +69,8 @@ void	mutex_inits(t_philosophers *philos)
 {
 	int	i;
 
-	pthread_mutex_init(&(philos -> dead_philo_mutex), NULL);
 	pthread_mutex_init(&(philos -> print_mutex), NULL);
-	pthread_mutex_init(&(philos -> all_philos_finished_mutex), NULL);
+	pthread_mutex_init(&(philos -> finish_mutex), NULL);
 	philos -> forks = malloc(philos->number_of_philos
 			* sizeof(pthread_mutex_t));
 	if (!philos -> forks)

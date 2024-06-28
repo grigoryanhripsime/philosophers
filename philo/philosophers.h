@@ -41,12 +41,10 @@ typedef struct s_philosophers
 	size_t			time_to_sleep;
 	size_t			start;
 	int				number_philos_must_eat;
-	int				all_philos_finished;
-	pthread_mutex_t	all_philos_finished_mutex;
 	t_philo			*philos;
 	pthread_mutex_t	*forks;
-	int				dead_philo;
-	pthread_mutex_t	dead_philo_mutex;
+	int				finish;
+	pthread_mutex_t	finish_mutex;
 	pthread_mutex_t	print_mutex;
 }	t_philosophers;
 
@@ -59,10 +57,9 @@ int				ft_usleep(int mls);
 
 //philosophers.c
 int				main(int argc, char *argv[]);
-int				check_dead(t_philosophers *philos, int i);
-int				check_eaten(t_philosophers *philos, int i);
+int				check_dead(t_philosophers *philos);
+int				check_eaten(t_philosophers *philos);
 void			close_destroy(t_philosophers *philos);
-void			loop(t_philosophers	*philos);
 
 //init.c
 t_philosophers	*init(int argc, char *argv[]);
@@ -70,6 +67,7 @@ void			create_threads(t_philosophers *philosophers);
 void			mutex_inits(t_philosophers *philos);
 
 //routine.c
+int finished(t_philosophers *philos);
 void			*routine(void *philo_void);
 int				eating(t_philo *philo,
 					pthread_mutex_t *l_fork, pthread_mutex_t *r_fork);
