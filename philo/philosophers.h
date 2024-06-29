@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/28 16:23:49 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:50:48 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,10 @@ typedef struct s_philosophers
 }	t_philosophers;
 
 //utils.c
-int				ft_isspace(char c);
 int				ft_strlen(char *s);
 int				check_num(char *str);
-long long			get_time(void);
-void				ft_usleep(long long mls);
+long long		get_time(void);
+void			ft_usleep(long long mls);
 
 //philosophers.c
 int				main(int argc, char *argv[]);
@@ -67,7 +66,7 @@ void			create_threads(t_philosophers *philosophers);
 void			mutex_inits(t_philosophers *philos);
 
 //routine.c
-int finished(t_philosophers *philos);
+int				finished(t_philosophers *philos);
 void			*routine(void *philo_void);
 int				eating(t_philo *philo,
 					pthread_mutex_t *l_fork, pthread_mutex_t *r_fork);

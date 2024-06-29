@@ -6,16 +6,16 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:36 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/28 16:26:03 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:51:59 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int finished(t_philosophers *philos)
+int	finished(t_philosophers *philos)
 {
-	int finished;
-	
+	int	finished;
+
 	pthread_mutex_lock(&(philos->finish_mutex));
 	finished = philos->finish;
 	pthread_mutex_unlock(&(philos->finish_mutex));
@@ -76,7 +76,8 @@ int	print(t_philosophers *philosophers, int index, char *message)
 	if (finished(philosophers))
 		return (0);
 	pthread_mutex_lock(&(philosophers->print_mutex));
-	printf("%llu %d %s\n", get_time() - philosophers->start, index + 1, message);
+	printf("%llu %d %s\n", get_time() - philosophers->start,
+		index + 1, message);
 	pthread_mutex_unlock(&(philosophers->print_mutex));
 	return (1);
 }
@@ -84,7 +85,6 @@ int	print(t_philosophers *philosophers, int index, char *message)
 int	taking_forks(t_philo *philo,
 	pthread_mutex_t **l_fork, pthread_mutex_t **r_fork)
 {
-	
 	if (!print(philo->data, philo->index, "has taken a fork")
 		|| philo->data->number_of_philos == 1)
 	{

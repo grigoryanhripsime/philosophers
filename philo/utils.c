@@ -6,19 +6,11 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:12 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/28 16:23:44 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:52:12 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-int	ft_isspace(char c)
-{
-	if (c == '\t' || c == '\n' || c == '\v'
-		|| c == '\f' || c == '\r' || c == ' ')
-		return (1);
-	return (0);
-}
 
 int	ft_strlen(char *s)
 {
@@ -39,8 +31,6 @@ int	check_num(char *str)
 
 	num = 0;
 	i = 0;
-	while (str[i] && ft_isspace(str[i]))
-		i++;
 	while (str[i] && str[i] == '0')
 		i++;
 	if (ft_strlen(str + i) > 10)
@@ -72,7 +62,7 @@ long long	get_time(void)
 
 void	ft_usleep(long long mls)
 {
-	long long t;
+	long long	t;
 
 	t = get_time();
 	while (get_time() - t <= mls)
