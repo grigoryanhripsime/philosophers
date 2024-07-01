@@ -20,6 +20,9 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <string.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 typedef struct s_philosophers	t_philosophers;
 
@@ -27,11 +30,11 @@ typedef struct s_philo
 {
 	int				index;
 	int				pid;
-	pthread_t thread_id;
+	pthread_t		thread_id;
 	size_t			after_last_meal;
-	sem_t	after_last_meal_mutex;
+	sem_t			*after_last_meal_sem;
 	int				number_of_times_he_ate;
-	sem_t	number_of_times_he_ate_mutex;
+	sem_t			*number_of_times_he_ate_sem;
 	t_philosophers	*data;
 }	t_philo;
 
@@ -44,9 +47,9 @@ typedef struct s_philosophers
 	size_t			start;
 	int				number_philos_must_eat;
 	t_philo			*philos;
-	sem_t	forks;
+	sem_t			*forks;
 	int				finish;
-	sem_t	print_mutex;
+	sem_t			*print_sem;
 }	t_philosophers;
 
 //utils.c
@@ -63,17 +66,15 @@ void			close_destroy(t_philosophers *philos);
 
 //init.c
 t_philosophers	*init(int argc, char *argv[]);
-void			create_forks(t_philosophers *philosophers);
-void			mutex_inits(t_philosophers *philos);
+void			create_philos(t_philosophers *philosophers);
+void			semaphores(t_philosophers *philos);
+//void			mutex_inits(t_philosophers *philos);
 
 //routine.c
 int				finished(t_philosophers *philos);
 void			routine(t_philo *philo);
-int				eating(t_philo *philo,
-					pthread_mutex_t *l_fork, pthread_mutex_t *r_fork);
-int				print(t_philosophers *philosophers,
-					int index, char *message);
-int				taking_forks(t_philo *philo,
-					pthread_mutex_t **left_fork, pthread_mutex_t **right_fork);
+int				eating(t_philo *philo);
+int	print(t_philosophers *philosophers, int index, char *message);
+int				taking_forks(t_philo *philo);
 
 #endif

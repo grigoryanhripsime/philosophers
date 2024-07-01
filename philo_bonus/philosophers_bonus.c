@@ -21,16 +21,14 @@ int	main(int argc, char *argv[])
 	philos = init(argc, argv);
 	if (!philos)
 		return (printf("Invalid Argument!!!\n"));
+
 	//mutex_inits(philos);
-	create_forks(philos);
-	// while (1)
-	// {
-	// 	if (check_dead(philos))
-	// 		break ;
-	// 	if (check_eaten(philos))
-	// 		break ;
-	// }
-	// close_destroy(philos);
+	printf("%d\n", __LINE__);
+	semaphores(philos);
+	printf("%d\n", __LINE__);
+	create_philos(philos);
+	printf("%d\n", __LINE__);
+	close_destroy(philos);
 }
 
 // int	check_dead(t_philosophers *philos)
@@ -87,26 +85,35 @@ int	main(int argc, char *argv[])
 // 	return (0);
 // }
 
-// void	close_destroy(t_philosophers *philos)
-// {
-// 	int	i;
+void	close_destroy(t_philosophers *philos)
+{
+	int	i;
+	int exit;
 
-// 	i = 0;
-// 	while (i < philos -> number_of_philos)
-// 	{
-// 		pthread_join(philos->philos[i].thread_id, NULL);
-// 		pthread_mutex_destroy(&(philos -> forks[i]));
-// 		pthread_mutex_destroy(&(philos->philos[i].after_last_meal_mutex));
-// 		pthread_mutex_destroy(
-// 			&(philos->philos[i].number_of_times_he_ate_mutex));
-// 		i++;
-// 	}
-// 	pthread_mutex_destroy(&(philos -> finish_mutex));
-// 	pthread_mutex_destroy(&(philos -> print_mutex));
-// 	free(philos->philos);
-// 	free(philos->forks);
-// 	free(philos);
-// }
+	i = 0;
+	while (i < philos -> number_of_philos)
+	{
+		waitpid(-1, &exit, 0);
+		if (WEXITSTATUS(exit) > 0)
+		{
+			i = 0;
+			while (i < philos->number_of_philos)
+				kill(philos->philos[i].pid, SIGKILL);
+			break ;
+		}
+		sem_close(philos->philos[i].after_last_meal_sem);
+		sem_unlink("/last_meal");
+		sem_close(philos->philos[i].number_of_times_he_ate_sem);
+		sem_unlink("/num_he_ate");
+		i++;
+	}
+	sem_close(philos->forks);
+	sem_unlink("/forks");
+	sem_close(philos->print_sem);
+	sem_unlink("/print");
+	free(philos->philos);
+	free(philos);
+}
 
 
 // 	finished(t_philosophers *philos)
