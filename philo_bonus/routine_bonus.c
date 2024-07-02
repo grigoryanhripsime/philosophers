@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:36 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 15:48:18 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:34:05 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,7 @@ void	*check(void *philo_void)
 	philo = philo_void;
 	while (1)
 	{
-		sem_wait(philo->data->after_last_meal_sem);
-		if ((get_time() - philo->after_last_meal)
-			>= philo->data->time_to_die)
-		{
-			sem_wait(philo->data->print_sem);
-			printf("%llu %d %s\n", get_time() - philo->data->start,
-				philo->index + 1, "died");
-			exit(1);
-		}
-		sem_post(philo->data->after_last_meal_sem);
-		sem_wait(philo->data->number_of_times_he_ate_sem);
-		if (philo->number_of_times_he_ate
-			== philo->data->number_philos_must_eat)
-		{
-			sem_post(philo->data->number_of_times_he_ate_sem);
-			exit(0);
-		}
-		sem_post(philo->data->number_of_times_he_ate_sem);
+		finished(philo);
 	}
 	return (NULL);
 }
@@ -48,7 +31,8 @@ void	routine(t_philo *philo)
 		usleep(500);
 	while (1)
 	{
-		eating(philo);
+		if (!eating(philo))
+			return ;
 		print(philo->data, philo->index, "is sleeping");
 		ft_usleep(philo->data->time_to_sleep);
 		print(philo->data, philo->index, "is thinking");
@@ -81,35 +65,45 @@ int	eating(t_philo *philo)
 	return (1);
 }
 
-int	finished(t_philo *philo)
+void	finished(t_philo *philo)
 {
 	sem_wait(philo->data->after_last_meal_sem);
 	if ((get_time() - philo->after_last_meal)
 		>= philo->data->time_to_die)
 	{
-		sem_post(philo->data->after_last_meal_sem);
 		sem_wait(philo->data->print_sem);
 		printf("%llu %d %s\n", get_time() - philo->data->start,
 			philo->index + 1, "died");
-		sem_post(philo->data->print_sem);
-		return (1);
+		sem_wait(philo->data->finish_sem);
+		philo->data->finish = 1;
+		sem_post(philo->data->finish_sem);
+		sem_post(philo->data->after_last_meal_sem);
+		exit(1);
 	}
 	sem_post(philo->data->after_last_meal_sem);
 	sem_wait(philo->data->number_of_times_he_ate_sem);
-	if (philo->number_of_times_he_ate >= philo->data->number_philos_must_eat)
+	if (philo->number_of_times_he_ate
+		== philo->data->number_philos_must_eat)
 	{
 		sem_post(philo->data->number_of_times_he_ate_sem);
-		return (1);
+		sem_wait(philo->data->finish_sem);
+		philo->data->finish = 1;
+		sem_post(philo->data->finish_sem);
+		exit(0);
 	}
 	sem_post(philo->data->number_of_times_he_ate_sem);
-	return (0);
 }
 
 int	print(t_philosophers *philosophers, int index, char *message)
 {
-	// if (finished(&philosophers->philos[index]))
-	// 	return (0);
 	sem_wait(philosophers->print_sem);
+	sem_wait(philosophers->finish_sem);
+	if (philosophers->finish == 1)
+	{
+		sem_post(philosophers->finish_sem);
+		return (0);
+	}
+	sem_post(philosophers->finish_sem);
 	printf("%llu %d %s\n", get_time() - philosophers->start,
 		index + 1, message);
 	sem_post(philosophers->print_sem);

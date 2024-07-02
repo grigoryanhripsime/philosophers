@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 15:41:34 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:15:21 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	close_unlink(t_philosophers *philos)
 	sem_unlink("/forks");
 	sem_close(philos->print_sem);
 	sem_unlink("/print");
+	sem_close(philos->finish_sem);
+	sem_unlink("/finish");
 }
 
 int	main(int argc, char *argv[])
@@ -60,6 +62,7 @@ void	close_destroy(t_philosophers *philos)
 		}
 		i++;
 	}
+	close_unlink(philos);
 	free(philos->philos);
 	free(philos);
 }

@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:08 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 15:40:46 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:14:03 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	semaphores(t_philosophers *philos)
 {
 	philos->forks = sem_open("/forks", O_CREAT, 0644, philos->number_of_philos);
 	philos->print_sem = sem_open("/print", O_CREAT, 0644, 1);
+	philos->finish_sem = sem_open("/finish", O_CREAT, 0644, 1);
 	philos->after_last_meal_sem = sem_open("/last_meal", O_CREAT, 0644, 1);
 	philos->number_of_times_he_ate_sem = sem_open("/num_he_ate",
 			O_CREAT, 0644, 1);

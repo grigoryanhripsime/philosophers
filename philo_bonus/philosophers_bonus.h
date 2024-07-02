@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 15:42:57 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:34:23 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_philosophers
 	t_philo			*philos;
 	sem_t			*forks;
 	int				finish;
+	sem_t			*finish_sem;
 	sem_t			*print_sem;
 	sem_t			*after_last_meal_sem;
 	sem_t			*number_of_times_he_ate_sem;
@@ -71,7 +72,7 @@ void			create_philos(t_philosophers *philosophers);
 void			semaphores(t_philosophers *philos);
 
 //routine.c
-int				finished(t_philo *philo);
+void			finished(t_philo *philo);
 void			routine(t_philo *philo);
 int				eating(t_philo *philo);
 int				print(t_philosophers *philosophers, int index,
