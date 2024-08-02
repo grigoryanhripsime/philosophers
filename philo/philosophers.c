@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/29 13:50:09 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/08/02 18:29:28 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	main(int argc, char *argv[])
 	philos = init(argc, argv);
 	if (!philos)
 		return (printf("Invalid Argument!!!\n"));
+	if (philos->number_philos_must_eat == 0)
+		return (0);
 	mutex_inits(philos);
 	create_threads(philos);
 	while (1)
@@ -31,6 +33,7 @@ int	main(int argc, char *argv[])
 			break ;
 	}
 	close_destroy(philos);
+	return (0);
 }
 
 int	check_dead(t_philosophers *philos)
@@ -42,7 +45,7 @@ int	check_dead(t_philosophers *philos)
 	{
 		pthread_mutex_lock(&(philos->philos[i].after_last_meal_mutex));
 		if ((get_time() - philos->philos[i].after_last_meal)
-			>= philos->time_to_die)
+			>= (size_t) philos->time_to_die)
 		{
 			pthread_mutex_lock(&(philos->finish_mutex));
 			philos->finish = 1;

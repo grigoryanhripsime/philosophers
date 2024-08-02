@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:36 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 20:34:05 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/30 17:41:53 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,7 @@ void	*check(void *philo_void)
 
 	philo = philo_void;
 	while (1)
-	{
 		finished(philo);
-	}
 	return (NULL);
 }
 
@@ -32,7 +30,7 @@ void	routine(t_philo *philo)
 	while (1)
 	{
 		if (!eating(philo))
-			return ;
+			break ;
 		print(philo->data, philo->index, "is sleeping");
 		ft_usleep(philo->data->time_to_sleep);
 		print(philo->data, philo->index, "is thinking");
@@ -69,14 +67,11 @@ void	finished(t_philo *philo)
 {
 	sem_wait(philo->data->after_last_meal_sem);
 	if ((get_time() - philo->after_last_meal)
-		>= philo->data->time_to_die)
+		>= (size_t) philo->data->time_to_die)
 	{
 		sem_wait(philo->data->print_sem);
 		printf("%llu %d %s\n", get_time() - philo->data->start,
 			philo->index + 1, "died");
-		sem_wait(philo->data->finish_sem);
-		philo->data->finish = 1;
-		sem_post(philo->data->finish_sem);
 		sem_post(philo->data->after_last_meal_sem);
 		exit(1);
 	}
@@ -86,9 +81,6 @@ void	finished(t_philo *philo)
 		== philo->data->number_philos_must_eat)
 	{
 		sem_post(philo->data->number_of_times_he_ate_sem);
-		sem_wait(philo->data->finish_sem);
-		philo->data->finish = 1;
-		sem_post(philo->data->finish_sem);
 		exit(0);
 	}
 	sem_post(philo->data->number_of_times_he_ate_sem);
@@ -97,13 +89,6 @@ void	finished(t_philo *philo)
 int	print(t_philosophers *philosophers, int index, char *message)
 {
 	sem_wait(philosophers->print_sem);
-	sem_wait(philosophers->finish_sem);
-	if (philosophers->finish == 1)
-	{
-		sem_post(philosophers->finish_sem);
-		return (0);
-	}
-	sem_post(philosophers->finish_sem);
 	printf("%llu %d %s\n", get_time() - philosophers->start,
 		index + 1, message);
 	sem_post(philosophers->print_sem);

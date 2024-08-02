@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:08 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/02 20:14:03 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/06 17:39:53 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,20 @@ t_philosophers	*init(int argc, char *argv[])
 	if (!philos)
 		return (0);
 	philos -> start = get_time();
-	philos -> number_of_philos = check_num(argv[1]);
-	philos -> time_to_die = check_num(argv[2]);
-	philos -> time_to_eat = check_num(argv[3]);
-	philos -> time_to_sleep = check_num(argv[4]);
-	philos -> finish = 0;
+	philos -> number_of_philos = check_num(argv[1], 1);
+	philos -> time_to_die = check_num(argv[2], 2);
+	philos -> time_to_eat = check_num(argv[3], 3);
+	philos -> time_to_sleep = check_num(argv[4], 4);
 	if (argc == 6)
-		philos -> number_philos_must_eat = check_num(argv[5]);
+	{
+		philos -> number_philos_must_eat = check_num(argv[5], 5);
+		if (philos -> number_philos_must_eat == -1)
+			return (0);
+	}
 	else
 		philos -> number_philos_must_eat = -1;
-	if (philos -> number_philos_must_eat == 0)
-		return (0);
-	if (philos -> number_of_philos == 0 || philos -> time_to_die == 0
-		|| philos -> time_to_eat == 0 || philos -> time_to_sleep == 0)
+	if (philos -> number_of_philos == -1 || philos -> time_to_die == -1
+		|| philos -> time_to_eat == -1 || philos -> time_to_sleep == -1)
 		return (0);
 	return (philos);
 }
@@ -62,7 +63,6 @@ void	semaphores(t_philosophers *philos)
 {
 	philos->forks = sem_open("/forks", O_CREAT, 0644, philos->number_of_philos);
 	philos->print_sem = sem_open("/print", O_CREAT, 0644, 1);
-	philos->finish_sem = sem_open("/finish", O_CREAT, 0644, 1);
 	philos->after_last_meal_sem = sem_open("/last_meal", O_CREAT, 0644, 1);
 	philos->number_of_times_he_ate_sem = sem_open("/num_he_ate",
 			O_CREAT, 0644, 1);

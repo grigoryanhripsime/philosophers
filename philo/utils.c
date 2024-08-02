@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:12 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/29 13:52:12 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/06 16:39:05 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,22 @@ int	ft_strlen(char *s)
 	return (i);
 }
 
-int	check_num(char *str)
+int	check_num(char *str, int index)
 {
 	long	num;
 	int		i;
 
 	num = 0;
 	i = 0;
-	while (str[i] && str[i] == '0')
-		i++;
 	if (ft_strlen(str + i) > 10)
-		return (0);
+		return (-1);
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		num = (num * 10) + (str[i] - '0');
 		i++;
 	}
-	if (str[i] || num > 2147483647)
-		return (0);
+	if (str[i] || num > 2147483647 || (index != 5 && num == 0))
+		return (-1);
 	return (num);
 }
 
@@ -60,11 +58,15 @@ long long	get_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000) - smt);
 }
 
-void	ft_usleep(long long mls)
+void	ft_usleep(long long mls, t_philosophers *philosophers)
 {
 	long long	t;
 
 	t = get_time();
 	while (get_time() - t <= mls)
+	{
+		if (finished(philosophers))
+			return ;
 		usleep(500);
+	}
 }

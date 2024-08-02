@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/29 13:50:48 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/06 16:25:07 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ typedef struct s_philo
 typedef struct s_philosophers
 {
 	int				number_of_philos;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
 	size_t			start;
 	int				number_philos_must_eat;
 	t_philo			*philos;
@@ -50,9 +50,9 @@ typedef struct s_philosophers
 
 //utils.c
 int				ft_strlen(char *s);
-int				check_num(char *str);
+int				check_num(char *str, int index);
 long long		get_time(void);
-void			ft_usleep(long long mls);
+void			ft_usleep(long long mls, t_philosophers *philosophers);
 
 //philosophers.c
 int				main(int argc, char *argv[]);
