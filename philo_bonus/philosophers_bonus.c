@@ -22,6 +22,8 @@ void	close_unlink(t_philosophers *philos)
 	sem_unlink("/forks");
 	sem_close(philos->print_sem);
 	sem_unlink("/print");
+	sem_close(philos->die_sem);
+	sem_unlink("/die");
 }
 
 int	main(int argc, char *argv[])

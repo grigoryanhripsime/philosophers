@@ -44,12 +44,13 @@ typedef struct s_philosophers
 	int				time_to_sleep;
 	size_t			start;
 	int				number_philos_must_eat;
+	int				die;
 	t_philo			*philos;
 	sem_t			*forks;
 	sem_t			*print_sem;
 	sem_t			*after_last_meal_sem;
 	sem_t			*number_of_times_he_ate_sem;
-
+	sem_t			*die_sem;
 }	t_philosophers;
 
 //utils.c
