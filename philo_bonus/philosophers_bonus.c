@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/08/02 18:29:36 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:05:40 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	main(int argc, char *argv[])
 	close_unlink(philos);
 	semaphores(philos);
 	create_philos(philos);
+	printf("Im here111\n");
 	close_destroy(philos);
 	return (0);
 }

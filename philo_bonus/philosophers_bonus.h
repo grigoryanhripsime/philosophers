@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/06 17:38:38 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:34:50 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <fcntl.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <limits.h>
 
 typedef struct s_philosophers	t_philosophers;
 
@@ -31,7 +32,7 @@ typedef struct s_philo
 	int				index;
 	int				pid;
 	pthread_t		thread_id;
-	size_t			after_last_meal;
+	long long		after_last_meal;
 	int				number_of_times_he_ate;
 	t_philosophers	*data;
 }	t_philo;

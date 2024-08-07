@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:36 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/30 17:41:53 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:57:50 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,21 @@
 
 int	check_die(t_philo *philo)
 {
+	long long	time;
+
 	sem_wait(philo->data->after_last_meal_sem);
-	if (get_time() - philo->after_last_meal >= (size_t) philo->data->time_to_die)
+	time = philo->after_last_meal;
+	sem_post(philo->data->after_last_meal_sem);
+	sem_post(philo->data->after_last_meal_sem);
+	if (get_time() - time >= philo->data->time_to_die)
 	{
 		sem_wait(philo->data->die_sem);
 		philo->data->die = 1;
 		sem_post(philo->data->die_sem);
 		sem_wait(philo->data->print_sem);
 		printf("%lld %d %s", get_time(), philo->index + 1, "died\n");
-		sem_post(philo->data->after_last_meal_sem);
 		exit(1);
 	}
-	sem_post(philo->data->after_last_meal_sem);
 	return (0);
 }
 
@@ -57,8 +60,6 @@ void	*check(t_philo *philo)
 void	routine(t_philo *philo)
 {
 	pthread_create(&philo->thread_id, NULL, (void *)check, philo);
-	if ((philo -> index + 1) % 2 == 0)
-		usleep(500);
 	while (1)
 	{
 		sem_wait(philo->data->forks);
