@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/08/07 13:05:40 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:53:11 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	close_unlink(t_philosophers *philos)
 	sem_unlink("/forks");
 	sem_close(philos->print_sem);
 	sem_unlink("/print");
-	sem_close(philos->die_sem);
-	sem_unlink("/die");
+	sem_close(philos->finish_sem);
+	sem_unlink("/finish");
 }
 
 int	main(int argc, char *argv[])
@@ -36,13 +36,14 @@ int	main(int argc, char *argv[])
 	if (!philos)
 		return (printf("Invalid Argument!!!\n"));
 	if (philos->number_philos_must_eat == 0)
+	{
+		free(philos);
 		return (0);
+	}
 	close_unlink(philos);
 	semaphores(philos);
 	create_philos(philos);
-	printf("Im here111\n");
 	close_destroy(philos);
-	return (0);
 }
 
 void	close_destroy(t_philosophers *philos)
@@ -54,7 +55,7 @@ void	close_destroy(t_philosophers *philos)
 	while (i < philos -> number_of_philos)
 	{
 		waitpid(-1, &exit, 0);
-		if (WEXITSTATUS(exit) > 0)
+		if (WEXITSTATUS(exit) == 1)
 		{
 			i = 0;
 			while (i < philos->number_of_philos)

@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:08 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/06 16:38:49 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:51:36 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,17 @@ t_philosophers	*init(int argc, char *argv[])
 	if (!philos)
 		return (0);
 	philos -> start = get_time();
-	philos -> number_of_philos = check_num(argv[1], 1);
-	philos -> time_to_die = check_num(argv[2], 2);
-	philos -> time_to_eat = check_num(argv[3], 3);
-	philos -> time_to_sleep = check_num(argv[4], 4);
+	philos -> number_of_philos = check_num(argv[1]);
+	philos -> time_to_die = check_num(argv[2]);
+	philos -> time_to_eat = check_num(argv[3]);
+	philos -> time_to_sleep = check_num(argv[4]);
 	philos -> finish = 0;
 	if (argc == 6)
-	{
-		philos -> number_philos_must_eat = check_num(argv[5], 5);
-		if (philos -> number_philos_must_eat == -1)
-			return (0);
-	}
+		philos -> number_philos_must_eat = check_num(argv[5]);
 	else
-		philos -> number_philos_must_eat = -1;
+		philos -> number_philos_must_eat = -2;
+	if (philos -> number_philos_must_eat == -1)
+		return (0);
 	if (philos -> number_of_philos == -1 || philos -> time_to_die == -1
 		|| philos -> time_to_eat == -1 || philos -> time_to_sleep == -1)
 		return (0);

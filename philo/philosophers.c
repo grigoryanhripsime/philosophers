@@ -6,11 +6,12 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/08/02 18:29:28 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/10/04 16:56:31 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <stdio.h>
 
 int	main(int argc, char *argv[])
 {
@@ -22,7 +23,10 @@ int	main(int argc, char *argv[])
 	if (!philos)
 		return (printf("Invalid Argument!!!\n"));
 	if (philos->number_philos_must_eat == 0)
+	{
+		free(philos);
 		return (0);
+	}
 	mutex_inits(philos);
 	create_threads(philos);
 	while (1)

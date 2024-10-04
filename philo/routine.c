@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:36 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/07/06 16:25:44 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:06:26 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	*routine(void *philo_void)
 		pthread_mutex_lock(&(philo->after_last_meal_mutex));
 		philo->after_last_meal = get_time();
 		pthread_mutex_unlock(&(philo->after_last_meal_mutex));
-		ft_usleep(philo->data->time_to_sleep, philo->data);
+		ft_usleep(philo->data->time_to_sleep);
 		print(philo->data, philo->index, "is thinking");
 	}
 	return (0);
@@ -62,7 +62,7 @@ int	eating(t_philo *philo, pthread_mutex_t *l_fork, pthread_mutex_t *r_fork)
 	pthread_mutex_lock(l_fork);
 	print(philo->data, philo->index, "has taken a fork");
 	print(philo->data, philo->index, "is eating");
-	ft_usleep(philo->data->time_to_eat, philo->data);
+	ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_unlock(r_fork);
 	pthread_mutex_unlock(l_fork);
 	pthread_mutex_lock(&(philo->number_of_times_he_ate_mutex));
