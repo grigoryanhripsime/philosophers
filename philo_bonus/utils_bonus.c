@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:12 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/06/30 15:24:08 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2025/02/17 19:34:59 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,16 @@ void	ft_usleep(long long mls)
 	t = get_time();
 	while (get_time() - t <= mls)
 		usleep(500);
+}
+
+void	*check(void *philo_void)
+{
+	t_philo	*philo;
+
+	philo = philo_void;
+	while (1)
+	{
+		finished(philo);
+	}
+	return (NULL);
 }

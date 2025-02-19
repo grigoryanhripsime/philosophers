@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -I ./ #-g -pthread -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -I ./ # -g -pthread -fsanitize=thread
 
 NAME = philo
 

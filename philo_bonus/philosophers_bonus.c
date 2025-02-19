@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:31 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/10/04 16:53:11 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:15:21 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,6 @@ int	main(int argc, char *argv[])
 	philos = init(argc, argv);
 	if (!philos)
 		return (printf("Invalid Argument!!!\n"));
-	if (philos->number_philos_must_eat == 0)
-	{
-		free(philos);
-		return (0);
-	}
 	close_unlink(philos);
 	semaphores(philos);
 	create_philos(philos);

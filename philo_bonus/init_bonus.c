@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:08 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/10/04 16:53:29 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:14:03 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ t_philosophers	*init(int argc, char *argv[])
 	if (argc == 6)
 		philos -> number_philos_must_eat = check_num(argv[5]);
 	else
-		philos -> number_philos_must_eat = -2;
-	if (philos -> number_philos_must_eat == -1)
+		philos -> number_philos_must_eat = -1;
+	if (philos -> number_philos_must_eat == 0)
 		return (0);
-	if (philos -> number_of_philos == -1 || philos -> time_to_die == -1
-		|| philos -> time_to_eat == -1 || philos -> time_to_sleep == -1)
+	if (philos -> number_of_philos == 0 || philos -> time_to_die == 0
+		|| philos -> time_to_eat == 0 || philos -> time_to_sleep == 0)
 		return (0);
 	return (philos);
 }

@@ -6,7 +6,7 @@
 /*   By: hrigrigo <hrigrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 16:37:28 by hrigrigo          #+#    #+#             */
-/*   Updated: 2024/10/04 16:52:11 by hrigrigo         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:50:48 by hrigrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ typedef struct s_philo
 typedef struct s_philosophers
 {
 	int				number_of_philos;
-	long long		time_to_die;
-	long long		time_to_eat;
-	long long		time_to_sleep;
-	long long		start;
+	size_t			time_to_die;
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	size_t			start;
 	int				number_philos_must_eat;
 	t_philo			*philos;
 	pthread_mutex_t	*forks;
